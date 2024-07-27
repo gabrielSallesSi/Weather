@@ -10,8 +10,38 @@
     
     
 </head>
+
 <body>
-    
+   
+    <script>
+        const apiKey = 'e758f83e1c560913872e6d38613135d4';
+
+        async function getCurrentLocationWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=pt_br`;
+
+                    const results = await fetch(apiUrl);
+                    const json = await results.json();
+
+                    if(json.cod === 200) {
+                        document.querySelector('#city_name').value = json.name;
+                        document.querySelector('#search').dispatchEvent(new Event('submit'));
+                    } else {
+                        document.querySelector("#weather").classList.remove('show');
+                        showAlert(`
+                            Não foi possível localizar essa cidade 🥺
+                            <img src="src/img/search.svg"/>
+                        `);
+                    }
+                });
+            } else {
+                alert('Geolocalização não é suportada por este navegador.');
+            }
+        }
+    </script>
     <div id="container">
         <form id="search">
             <i id="loc" class="fa-solid fa-location-crosshairs"></i>
@@ -88,5 +118,9 @@
         <div id="alert"></div>
     </div>
     <script src="src/javascript/script.js"></script>
+    <button class="button" id="china" onclick="getCurrentLocationWeather()">Clima da sua cidade</button>
 </body>
+
+</body>
+
 </html>
